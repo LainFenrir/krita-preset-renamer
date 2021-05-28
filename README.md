@@ -10,5 +10,7 @@ This script is made to rename the name in the metadata and the the file itself.
 
 ### Commands
 
+## General information
+
 ### Why not use krita itself?
 Krita by will create a backupfile whenever you change the name poluting your resource folder and also krita doesnt have a batch rename. This script will rename the file itself, no backups created and can also deal with multiple files.

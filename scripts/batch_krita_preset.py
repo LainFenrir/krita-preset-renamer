@@ -12,19 +12,17 @@ from PIL import Image
 #kpp tag preset <Preset paintopid="colorsmudge" name="LainKit_Wet_flat_size"> 
 # change both file name and name in the preset tag
 
-# <command> <option> <file_path> <new_name>  ==== option is optional
+# <command> <option> <file_path> <optional_param> <optional_param2>   option is optional
 
-commands = ["view","rename","help","v","r"]
-options = ["-f"]
+commands = ["help"]
+options = ["-f","-r","-p"]
 
 def main(argv):
     #Todo: help
     #Todo: rename
     #Todo: view Exif
 
-    if argv[0] not in commands:
-        print("Command not found. Valid Commands : %s" % str(commands))
-        sys.exit()
+    
     
     decide_command(argv)
 
@@ -46,32 +44,33 @@ def main(argv):
 
 
 """
-Prints Exif information from kpp file
-"""
-def view(args):
-    # -f full exif
-    if args[0] == "-f":
-        input_file = load_image(args[1])
-        for key in input_file.info:
-            print("%s: %s" % (key,input_file.info[key]))
-        input_file.close()
-        sys.exit()
-
-    input_file = load_image(args[0])
-    print(input_file.info['preset'])
-    input_file.close()
-
-
-"""
 Renames .kpp file
 """
 def rename(args):
     #todo
 
-    # -b batch process
+    # -f find and replace 
 
     # -p set prefix
+
+    # null replace name with another
     pass
+
+"""
+Batch proceess for many .kpp file
+"""
+def batch_process(args):
+    #todo
+
+    # -r rename
+
+    # -p set prefix
+
+    # -f find and replace 
+
+    # null replace name with another
+    pass
+
 
 """
 Shows help
@@ -87,30 +86,28 @@ def call_help():
 ##############################
 
 
-"""
-Checks the args 
-"""
-def checks_valid_args(args,valid_number):
-    if len(args) not in valid_number:
-        print("argument lenght not expected. ")
-        # sys.exit()
 
 """
-Checks the args 
+Builds operation instructions
 """
-def get_file_name(args):
-    #DELETE
-    if args[1] in options:
-        return args[2]
-    return args[1]
-
+def build_operation(args):
+    operation:dict = {}
+    operation.command = args[0]
     
+    if args[1] in options:
+        operation.option = args[1]
+        operation.json_file = args[2]
+    else:
+        operation.option = ""
+        operation.json_file = args[1]
+    
+
+
 """
 Checks if its a valid path 
 """
 def checks_path(file_name):
     if path.exists(file_name):
-        # print("file exists")
         return
     
     print("file doesnt exist. File name : %s" % file_name)
@@ -130,19 +127,6 @@ Changes the name in the metadata
 def format_metadata_name(current_name,new_name):
     #todo
     pass
-
-"""
-Decides which command to call
-"""
-def decide_command(args):
-    if args[0] == "view" or args[0] == "v":
-        view(args[1:])
-
-    if args[0] == "rename" or args[0] == "r":
-        rename(args[1:])
-
-    if args[0] == "help":
-        call_help()
 
 
 
