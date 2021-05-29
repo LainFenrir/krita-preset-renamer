@@ -9,17 +9,16 @@ from PIL import Image
 
 
 # <option> <filename>
-all_options = ["-f"]
+allOptions = ["-f"]
 def main(argv):
-    option = ""
-    file_name = argv[0]
-    if argv[0] in all_options:
-        option = argv[0]
-        file_name = argv[1]
+    adjustedArgs:list = adjustArgs(argv)
 
-    view(option,file_name)
+    option:str = adjustedArgs[0]
+    fileName:str = adjustedArgs[1]
 
-    # print('Argument List:', str(argv))
+    view(option,fileName)
+
+    print('Argument List:', str(argv))
 
 
 """
@@ -58,6 +57,17 @@ def checks_path(file_name):
     print("file doesnt exist. File name : %s" % file_name)
     sys.exit()
 
+"""
+when option is null it will add a dummy value to not mess up the parameters order
+"""
+def adjustArgs(args) -> list:
+    adjustedArgs:list = []
+    adjustedArgs.extend(args)
+    if args[0] not in allOptions:
+        adjustedArgs.clear()
+        adjustedArgs.insert(0,"")
+        adjustedArgs.extend(args)
+    return adjustedArgs
 
 ##############################
 ########## Main ##############

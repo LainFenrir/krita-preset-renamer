@@ -1,4 +1,0 @@
-- Rename one file given a new name
-- Add a prefix to the file 
-- replace part of the name of a file
-- batch rename

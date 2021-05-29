@@ -5,6 +5,7 @@ Feel free use or modify as you want
 """
 from os import path
 import sys
+import json
 from PIL import Image
 
 #python rename_krita_brush.py LainKit_Wet_flat_size.kpp 
@@ -12,28 +13,13 @@ from PIL import Image
 #kpp tag preset <Preset paintopid="colorsmudge" name="LainKit_Wet_flat_size"> 
 # change both file name and name in the preset tag
 
-# <command> <option> <file_path> <optional_param> <optional_param2>   option is optional
+# <command> <option> <file_path>
 
-commands = ["help"]
-options = ["-f","-r","-p"]
+
+options = ["-f","-r","-p","-d"]
 
 def main(argv):
-    #Todo: help
-    #Todo: rename
-    #Todo: view Exif
 
-    
-    
-    decide_command(argv)
-
-
-
-    # input_file = load_image(argv[1])
-    # input_file = Image.open(argv[0])
-    # input_file.load()
-
-    # for key in inputFile.info:
-    #     print("%s: %s" % (key,inputFile.info[key]))
     
 
     print('Argument List:', str(argv))
@@ -55,31 +41,6 @@ def rename(args):
 
     # null replace name with another
     pass
-
-"""
-Batch proceess for many .kpp file
-"""
-def batch_process(args):
-    #todo
-
-    # -r rename
-
-    # -p set prefix
-
-    # -f find and replace 
-
-    # null replace name with another
-    pass
-
-
-"""
-Shows help
-"""
-def call_help():
-    #todo
-    pass
-
-
 
 ##############################
 ###### Auxiliar Functions ####
@@ -128,7 +89,29 @@ def format_metadata_name(current_name,new_name):
     #todo
     pass
 
+"""
+Loads the configuration file
+"""
+def loadConfig():
+    global config 
 
+    if os.path.exists(configFileName):
+        with open(configFileName, "r") as jsonFile:
+            config = json.load(jsonFile)
+        return
+
+    folderAbove:str = Path(".").resolve().parent
+    configPathInFolderAbove:str= os.path.join(folderAbove,configFileName)
+    
+    if os.path.exists(configPathInFolderAbove):
+         with open(configPathInFolderAbove, "r") as jsonFile:
+            config = json.load(jsonFile)
+         return
+
+    print("Config file doesnt exist.Program will not run until %s file is in either %s or %s",configFileName,os.getcwd(),folderAbove)
+    #todo create default config file in cwd
+    sys.exit()
+    
 
 ##############################
 ########## Main ##############
