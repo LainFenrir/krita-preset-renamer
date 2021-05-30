@@ -16,7 +16,6 @@ from PIL import Image
 from PIL.PngImagePlugin import PngImageFile, PngInfo
 from send2trash import send2trash
 
-
 # This script changes both file name and name in the preset tag, creating a new copy of the preset
 
 # Command: <option> <file_path> <new_name> <find>   option is optional
@@ -38,8 +37,6 @@ def main(argv):
     if option == "-f":
         find= adjustedArgs[3]
     
-
-   
     rename(option,fileName,newName,find)
     print("Finished!")
     print('Argument List:', str(argv))
@@ -64,14 +61,12 @@ def rename(option,file_name,new_name,find):
         print("Not Done Yet!")
         return
 
-
     # no option replaces name with another
     newFileName:str = createNewPreset(new_name,file_name)
     updateTagFile(file_name,newFileName)
 
     if toDeleteOldPreset:
         send2trash(file_name)
-
 
 
 """
@@ -90,9 +85,11 @@ def createNewPreset(new_name,file_name):
     metadata = PngInfo()
     for key in inputFile.info:
         if key == "dpi":
-            metadata.add_text(key,str(inputFile.info[key]))
+            # Since dpi is a tuple, had to transform to string to be able to pass it on
+            metadata.add_text(key,str(inputFile.info[key])) # Dont know if this tag is necessary but just to be safe.
             continue
         if key == "preset":
+            # avoiding duplicating the preset tag
             continue
         metadata.add_text(key,inputFile.info[key])
     metadata.add_text("preset", replacedPreset)
@@ -140,7 +137,7 @@ def updateTagFile(old_name:str,new_name:str):
     tagsXml.write(tagFilePath,encoding="utf-8")
 
 ##############################
-###### Auxiliar Functions ####
+##### Auxiliar Functions #####
 ##############################
 
 """
@@ -184,8 +181,6 @@ def adjustArgs(args) -> list:
         adjustedArgs.insert(0,"")
         adjustedArgs.extend(args)
     return adjustedArgs
-
-
 
 ##############################
 ########## Main ##############
