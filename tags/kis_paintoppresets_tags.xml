@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE tags>
 <tags>
  <resource identifier="bundle://~/AppData/Roaming/krita/bundles/mojo-moo-ink.bundle:paintoppresets/moo-zip-mammoth-72.kpp" md5="MzVQW60L47gPOm2hytjIpw==">
   <tag blacklisted="false">moo zip</tag>
@@ -2647,7 +2645,7 @@
  <resource identifier="~/AppData/Roaming/krita/paintoppresets/Essential_Details_Birds2.kpp" md5="dMep7+GyYFk3hayWW9oUxg==">
   <tag blacklisted="false">Essentials</tag>
  </resource>
- <resource identifier="~/AppData/Roaming/krita/paintoppresets/LainKit_Wet_flat_size.kpp" md5="nWZvuzFqQ1929NQAvxoFbw==">
+ <resource identifier="~/AppData/Roaming/krita/paintoppresets/LunarKit_Round_Flat_Size.kpp">
     <tag blacklisted="false">LainKit</tag>
    </resource>
  <resource identifier="bundle://F:/Program Files/Krita (x64)/share/krita/bundles/Krita_4_Default_Resources.bundle:paintoppresets/f)_Bristles-2_Flat_Rough.kpp" md5="Y6RYyZIloBCQeYaaNePUMg==">
@@ -3853,7 +3851,7 @@
   <tag blacklisted="true">Toman_V1</tag>
  </resource>
  <resource identifier="dummy">
-  <tag blacklisted="true"></tag>
+  <tag blacklisted="true" />
  </resource>
  <resource identifier="dummy">
   <tag blacklisted="true">PESI'S WATERCOLORS</tag>

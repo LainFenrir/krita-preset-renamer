@@ -1,19 +1,23 @@
 """
 Add this script inside the paintoppresets folder inside the krita resource folder
 
+This script will copy an existing preset and will change the name and update the name in the preset tags.
+You can change the toDeleteOldPreset to True so it will send the old preset to the trahsbin
+
 Made by LunarKreatures(LainFenrir)
 Feel free use or modify as you want
 """
 import os
 import sys
 import xml.etree.ElementTree as ET
+import re
 from pathlib import Path
 from PIL import Image
 from PIL.PngImagePlugin import PngImageFile, PngInfo
 from send2trash import send2trash
 
-#kpp tag preset <Preset paintopid="colorsmudge" name="LainKit_Wet_flat_size"> 
-# change both file name and name in the preset tag
+
+# This script changes both file name and name in the preset tag, creating a new copy of the preset
 
 # Command: <option> <file_path> <new_name> <find>   option is optional
 
@@ -37,7 +41,6 @@ def main(argv):
 
    
     rename(option,fileName,newName,find)
-    #todo: add message for errors
     print("Finished!")
     print('Argument List:', str(argv))
 
@@ -63,7 +66,8 @@ def rename(option,file_name,new_name,find):
 
 
     # no option replaces name with another
-    createNewPreset(new_name,file_name)
+    newFileName:str = createNewPreset(new_name,file_name)
+    updateTagFile(file_name,newFileName)
 
     if toDeleteOldPreset:
         send2trash(file_name)
@@ -75,7 +79,8 @@ Changes the name in the metadata and creates the new kpp file
 """
 def createNewPreset(new_name,file_name):
     # Transforms to xml for easy replace of the name, fixes the problem of name of the file being different from the metadata
-    presetInfo,inputFile = grabPresetFromMetadata(file_name)
+    inputFile = LoadImage(file_name)
+    presetInfo: str = inputFile.info['preset']
     metadataXml = ET.fromstring(presetInfo)
     metadataXml.attrib["name"] = new_name
     untrimmedString:str = ET.tostring(metadataXml, encoding='utf8',method="xml").decode('utf8')
@@ -106,7 +111,33 @@ def createNewPreset(new_name,file_name):
     
     # Changes the file extension from png to kpp
     os.rename(newNamePng,newNameKpp)
+    return newNameKpp
 
+"""
+Builds the path to the resources
+"""
+def updateTagFile(old_name:str,new_name:str):
+    tagFilePath:str = buildPathToTagFile()
+    #If no path, just skip the method
+    if not tagFilePath:
+        print("Tag update will be skipped.")
+        return
+    tagsXml = ET.parse(tagFilePath)
+    root = tagsXml.getroot()
+    replaced:str = ""
+    for resource in root.iter('resource'):
+        identifier = resource.attrib['identifier']
+        if re.search(old_name,identifier):
+            replaced = re.sub(rf"\b{old_name}\b",new_name,identifier)
+            resource.attrib['identifier'] = replaced
+            # If the md5 doesnt match it will not show, since i cant replicate the md5 removing was the best option
+            resource.attrib.pop("md5", None) #None to not raise expection in case it doesnt exist
+            break
+        
+    if not replaced:
+        print("No tags found for the old preset: %s, tags will remain unchanged."% old_name)
+        return
+    tagsXml.write(tagFilePath,encoding="utf-8")
 
 ##############################
 ###### Auxiliar Functions ####
@@ -118,33 +149,24 @@ Builds the path to the resources
 def buildPathToTagFile():
     # Assumes its inside paintoppresets folder
     folderAbove:str = Path(".").resolve().parent
-    tagPath = os.path.join(folderAbove,"tags")
-    return tagPath
-    pass
+    tagPath:str = os.path.join(folderAbove,"tags")
+    tagFilePath:str = os.path.join(tagPath,presetTagFileName)
 
-"""
-Builds operation instructions
-"""
-def grabPresetFromMetadata(file_name):
-    #todo: is necessary to be a function?
-    inputFile = LoadImage(file_name)
-    return inputFile.info['preset'],inputFile
+    # If the tag file doesnt exist then it will not update tags, return an empty path
+    if not os.path.exists(tagPath):
+        print("Tag file not found, the preset Tags will not be updated")
+        tagFilePath = ""
+    return tagFilePath
 
-"""
-Checks if its a valid path 
-"""
-def checksPathExists(file_name):
-    if os.path.exists(file_name):
-        return
-    
-    print("file doesnt exist. File name : %s" % file_name)
-    sys.exit()
-    
 """
 Loads the image
 """
 def LoadImage(file_name):
-    checksPathExists(file_name)
+    # check if the file name is valid, if not program aborts
+    if not os.path.exists(file_name):
+        print("Preset file doesnt exist, aborting the program. Check the file name : %s" % file_name)
+        sys.exit()
+        
     input_file = Image.open(file_name)
     # Necessary to load to get the metadata, close the file later
     input_file.load()
