@@ -1,4 +1,8 @@
-
+tags/
+paintoppresets/
+*.kpp
+kis_paintoppresets_tags.xml
+rename_test.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

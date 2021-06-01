@@ -1,4 +1,5 @@
 """
+Add at the folder you want to read the metadata from, or you can pass the path to the file
 
 Made by LunarKreatures(LainFenrir)
 Feel free use or modify as you want
@@ -20,11 +21,14 @@ def main(argv):
 
     print('Argument List:', str(argv))
 
+##############################
+###### Main Functions  #######
+##############################
 
 """
 Prints Exif information from kpp file
 """
-def view(option,file_name):
+def view(option:str,file_name:str):
     
     # -f full exif
     if option == "-f":
@@ -34,9 +38,14 @@ def view(option,file_name):
         input_file.close()
         return
 
+    # Nothing 
     input_file = load_image(file_name)
     print(input_file.info['preset'])
     input_file.close()
+
+##############################
+##### Auxiliar Functions #####
+##############################
 
 """
 Loads the image

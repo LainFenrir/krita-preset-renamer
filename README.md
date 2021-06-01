@@ -6,11 +6,12 @@ This pack of scripts is made to be a set of utilities to rename presets.
 
 ## How to install and use
 
-First you need to have python installed on your pc, you can download it from the [python website](https://www.python.org).
+First you need to have python installed on your pc, you can download it from the [python website](https://www.python.org). If you are on Windows make sure to install python with the `add to PATH` checked.
 After you installed python, you need to install these python libraries. just copy and paste the commands in a terminal. 
 ```
 python -m pip install -U send2trash
-python3 -m pip install --upgrade Pillow
+python -m pip install --upgrade Pillow
+
 ```
 You can read more about them in the links below:
 [send2trash](https://github.com/arsenetar/send2trash)

@@ -21,9 +21,9 @@ from send2trash import send2trash
 # Command: <option> <file_path> <new_name> <find>   option is optional
 
 #Change to True if you want to delete the old preset
-toDeleteOldPreset = False
+toDeleteOldPreset:bool = False
 
-presetTagFileName = "kis_paintoppresets_tags.xml"
+presetTagFileName:str = "kis_paintoppresets_tags.xml"
 allOptions:list = ["-f","-p"]
 
 def main(argv):

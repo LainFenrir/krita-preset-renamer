@@ -1,0 +1,11 @@
+{
+    "presetsToChange":[
+        {
+        "presetName":"",
+        "newPresetName":""
+        }
+    ],
+    "prefix": "",
+    "find": "",
+    "replace": ""
+}
