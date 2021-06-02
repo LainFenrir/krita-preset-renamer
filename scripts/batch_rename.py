@@ -16,27 +16,25 @@ from PIL import Image
 from PIL.PngImagePlugin import PngImageFile, PngInfo
 from send2trash import send2trash
 
+# This 
 
 # <command> <option> <file_path>
 
 #Change to True if you want to delete the old preset
 toDeleteOldPreset:bool = False
+# Global variables to avoid remaking paths 
 presetTagFileName:str = "kis_paintoppresets_tags.xml"
-kritaResourceDirectory = ""
 presetsFolderPath = ""
-tagsFolderPath = ""
+tagsFilePath = ""
 allOptions:list = ["-f","-p"]
 
 def main(argv):
     adjustedArgs:list = adjustArgs(argv)
 
-    global kritaResourceDirectory 
-    kritaResourceDirectory= os.getcwd()
+    #builds the paths and put them in global variabels so the path doesnt need to be built at every call
+    buildPaths()   
 
-    #todo review global variable
-    #todo do not create the path everytime to load image and tag file
-    #todo build path to get the preset inside the folder
-     # transforming argv to variables for easy acess
+    # transforming argv to variables for easy acess
     option:str = adjustedArgs[0]
     jsonFile:str = adjustedArgs[1]
 
@@ -53,7 +51,6 @@ def main(argv):
 Renames .kpp file
 """
 def rename(option:str,jsonFile):
-    #todo
     jsonData = loadJson(jsonFile)
     presetsList = jsonData["presetsToChange"]
    
@@ -73,7 +70,7 @@ def rename(option:str,jsonFile):
         newPresetName = preset["newPresetName"]
 
         newFileName = createNewPreset(newPresetName,currentFileName)
-        updateTagFile(newFileName,currentFileName)
+        updateTagFile(currentFileName,newFileName)
 
 
 """
@@ -81,7 +78,9 @@ Changes the name in the metadata and creates the new kpp file
 """
 def createNewPreset(new_name:str,file_name:str):
     # Transforms to xml for easy replace of the name, fixes the problem of name of the file being different from the metadata
-    inputFile = LoadImage(file_name)
+    presetPath: str = os.path.join(presetsFolderPath,file_name)
+    inputFile = loadImage(presetPath)
+
     presetInfo: str = inputFile.info["preset"]
     metadataXml = ET.fromstring(presetInfo)
     metadataXml.attrib["name"] = new_name
@@ -108,25 +107,22 @@ def createNewPreset(new_name:str,file_name:str):
     newNamePng:str = ".".join([new_name,"png"])
     newNameKpp:str = ".".join([new_name,"kpp"])
 
+    newFilePathPng = os.path.join(presetsFolderPath,newNamePng)
+    newFilePathKpp = os.path.join(presetsFolderPath,newNameKpp)
     #Loads the original file to become the new file
-    newPreset = PngImageFile(file_name)
+    newPreset = PngImageFile(presetPath)
     # cant save directly to kpp so needs to save as png
-    newPreset.save(newNamePng, pnginfo=metadata)
+    newPreset.save(newFilePathPng, pnginfo=metadata)
     
     # Changes the file extension from png to kpp
-    os.rename(newNamePng,newNameKpp)
+    os.rename(newFilePathPng,newFilePathKpp)
     return newNameKpp
 
 """
-Builds the path to the resources
+Updates the tag file to replace the old preset name with the new one. Also deletes any md5 for that preset.
 """
 def updateTagFile(old_name:str,new_name:str):
-    tagFilePath:str = buildPathToTagFile()
-    #If no path, just skip the method
-    if not tagFilePath:
-        print("Tag update will be skipped.")
-        return
-    tagsXml = ET.parse(tagFilePath)
+    tagsXml = ET.parse(tagsFilePath)
     root = tagsXml.getroot()
     replaced:str = ""
     for resource in root.iter("resource"):
@@ -141,7 +137,16 @@ def updateTagFile(old_name:str,new_name:str):
     if not replaced:
         print("No tags found for the old preset: %s, tags will remain unchanged."% old_name)
         return
-    tagsXml.write(tagFilePath,encoding="utf-8")
+    tagsXml.write(tagsFilePath,encoding="utf-8")
+
+"""
+Prefixes a name in front of an existing file.
+"""
+def prefixName(prefix:str,file_name:str):
+    fileNameWithoutExtension:str = file_name.split(".")[0]
+    prefixedName:str = "_".join([prefix,fileNameWithoutExtension]) 
+    return prefixedName
+
 
 ##############################
 ###### Auxiliar Functions ####
@@ -158,27 +163,10 @@ def loadJson(json_file):
         jsonLoaded = json.load(j)
     return jsonLoaded
 
-
-"""
-Builds the path to the resources
-"""
-def buildPathToTagFile():
-    #Assumes its in the krita resource folder
-    tagPath:str = os.path.join(kritaResourceDirectory,"tags")
-    tagFilePath:str = os.path.join(tagPath,presetTagFileName)
-
-    # If the tag file doesnt exist then it will not update tags, return an empty path
-    if not os.path.exists(tagPath):
-        print("Tag file not found, the preset Tags will not be updated")
-        tagFilePath = ""
-    return tagFilePath
-
 """
 Loads the image
 """
-def LoadImage(file_name:str):
-
-    
+def loadImage(file_name:str):
     # check if the file name is valid, if not program aborts
     if not os.path.exists(file_name):
         print("Preset file doesnt exist, aborting the program. Check the file name : %s" % file_name)
@@ -188,6 +176,29 @@ def LoadImage(file_name:str):
     # Necessary to load to get the metadata, close the file later
     input_file.load()
     return input_file
+
+"""
+Loads the image
+"""
+def buildPaths():
+    global tagsFilePath
+    global presetsFolderPath
+    #Assumes its in the krita resource folder
+    kritaResourceDirectory= os.getcwd()
+
+    #temporary variables to not mess with the globals
+    tagsPath:str = os.path.join(kritaResourceDirectory,"tags",presetTagFileName)
+    # tagsPathToFile:str = os.path.join(tagsPath,presetTagFileName)
+    
+    presetPath: str = os.path.join(kritaResourceDirectory,"paintoppresets")
+    # without paintoppreset folder its impossible to continue. a batch operation without updating the tags is also dangerous.
+    if os.path.exists(presetPath) and os.path.exists(tagsPath):
+        presetsFolderPath = presetPath
+        tagsFilePath = tagsPath
+        return
+
+    print("paintoppresets folder not found. The script needs to be inside the krita folder check the script location, the program will abort. current location of script %s."% kritaResourceDirectory)
+    sys.exit()
 
 """
 when option is null it will add a dummy value to not mess up the parameters order

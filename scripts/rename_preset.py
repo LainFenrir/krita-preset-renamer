@@ -57,8 +57,12 @@ def rename(option,file_name,new_name,find):
 
     # -p set prefix
     if option == "-p":
-       #todo:
-        print("Not Done Yet!")
+        prefixedName:str = prefixName(new_name,file_name)
+        newFileName:str = createNewPreset(prefixedName,file_name)
+        updateTagFile(file_name,newFileName)
+        
+        if toDeleteOldPreset:
+            send2trash(file_name)
         return
 
     # no option replaces name with another
@@ -82,6 +86,7 @@ def createNewPreset(new_name,file_name):
     # Xml Declaration added by ET,so removing here
     replacedPreset:str = untrimmedString.replace("<?xml version='1.0' encoding='utf8'?>", "").strip()
    
+    # Creating a new metadata object to replace the original
     metadata = PngInfo()
     for key in inputFile.info:
         if key == "dpi":
@@ -111,7 +116,7 @@ def createNewPreset(new_name,file_name):
     return newNameKpp
 
 """
-Builds the path to the resources
+Updates the tag file to replace the old preset name with the new one. Also deletes any md5 for that preset.
 """
 def updateTagFile(old_name:str,new_name:str):
     tagFilePath:str = buildPathToTagFile()
@@ -135,6 +140,14 @@ def updateTagFile(old_name:str,new_name:str):
         print("No tags found for the old preset: %s, tags will remain unchanged."% old_name)
         return
     tagsXml.write(tagFilePath,encoding="utf-8")
+
+"""
+Prefixes a name in front of an existing file.
+"""
+def prefixName(prefix:str,file_name:str):
+    fileNameWithoutExtension:str = file_name.split(".")[0]
+    prefixedName:str = "_".join([prefix,fileNameWithoutExtension]) 
+    return prefixedName
 
 ##############################
 ##### Auxiliar Functions #####

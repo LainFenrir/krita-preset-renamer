@@ -2,7 +2,7 @@ tags/
 paintoppresets/
 *.kpp
 kis_paintoppresets_tags.xml
-rename_test.json
+tests/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -133,3 +133,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+tags/kis_paintoppresets_tags.xml
