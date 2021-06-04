@@ -1,11 +1,9 @@
 """
-Add this script in the krita resource folder
+Add this script in the krita resource folder, You will need to create a json file following the template.
 
 Made by LunarKreatures(LainFenrir)
 Feel free use or modify as you want
 """
-
-
 import json
 import os
 import sys
@@ -16,7 +14,7 @@ from PIL import Image
 from PIL.PngImagePlugin import PngImageFile, PngInfo
 from send2trash import send2trash
 
-# This 
+# This script changes both file name and name in the preset tag, creating a new copy of the preset, for multiple presets in a json file.
 
 # <command> <option> <file_path>
 
@@ -61,16 +59,28 @@ def rename(option:str,jsonFile):
 
     # -p set prefix
     if option == "-p":
-        print("Not Done Yet!")
+        prefix:str = jsonData["prefix"]
+        for preset in presetsList:
+            currentFileName:str = preset["presetName"]
+            prefixedName:str = prefixName(prefix,currentFileName)
+            newFileName:str = createNewPreset(prefixedName,currentFileName)
+            updateTagFile(currentFileName,newFileName)
+            deleteOldPreset(currentFileName)
         return
 
     # null replace name with another
     for preset in presetsList:
         currentFileName = preset["presetName"]
-        newPresetName = preset["newPresetName"]
+        newPresetName:str = preset["newPresetName"]
 
         newFileName = createNewPreset(newPresetName,currentFileName)
+        
+        # Skiping file if file name already exists
+        if not newFileName:
+            continue
+
         updateTagFile(currentFileName,newFileName)
+        deleteOldPreset(currentFileName)
 
 
 """
@@ -107,14 +117,20 @@ def createNewPreset(new_name:str,file_name:str):
     newNamePng:str = ".".join([new_name,"png"])
     newNameKpp:str = ".".join([new_name,"kpp"])
 
+    #Creating file paths for the files, since they will be in a different folder from the script
     newFilePathPng = os.path.join(presetsFolderPath,newNamePng)
     newFilePathKpp = os.path.join(presetsFolderPath,newNameKpp)
     #Loads the original file to become the new file
     newPreset = PngImageFile(presetPath)
+
+    # If the file already exists just skip and log 
+    if os.path.exists(newFilePathKpp):
+        print("There is alreade a preset with the name %s, preset rename will be skipped. Delete existing file manually and try again."% newNameKpp)
+        return ""
     # cant save directly to kpp so needs to save as png
     newPreset.save(newFilePathPng, pnginfo=metadata)
     
-    # Changes the file extension from png to kpp
+    # Changes the file extension from png to kpp\
     os.rename(newFilePathPng,newFilePathKpp)
     return newNameKpp
 
@@ -127,7 +143,9 @@ def updateTagFile(old_name:str,new_name:str):
     replaced:str = ""
     for resource in root.iter("resource"):
         identifier = resource.attrib["identifier"]
-        if re.search(old_name,identifier):
+        #In case of names with especial characters we need to escape them first
+        escapedName:str = re.escape(old_name)
+        if re.search(escapedName,identifier):
             replaced = re.sub(rf"\b{old_name}\b",new_name,identifier)
             resource.attrib["identifier"] = replaced
             # If the md5 doesnt match it will not show, since i cant replicate the md5 removing was the best option
@@ -151,6 +169,19 @@ def prefixName(prefix:str,file_name:str):
 ##############################
 ###### Auxiliar Functions ####
 ##############################
+
+"""
+Sends the original preset file to the trashcan
+"""
+def deleteOldPreset(old_file_name:str):
+    pathToDelete:str = os.path.join(presetsFolderPath,old_file_name)
+    print(pathToDelete)
+    if toDeleteOldPreset:
+        if not os.path.exists(pathToDelete):
+            print("Preset [%s] not found."% old_file_name)
+            return
+        send2trash(pathToDelete)
+    print("File %s has been sent to the trash can."% old_file_name)
 
 """
 Builds the path to the resources

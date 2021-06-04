@@ -67,6 +67,11 @@ def rename(option,file_name,new_name,find):
 
     # no option replaces name with another
     newFileName:str = createNewPreset(new_name,file_name)
+
+    # Skiping file if file name already exists
+    if not newFileName:
+        return
+
     updateTagFile(file_name,newFileName)
 
     if toDeleteOldPreset:
@@ -108,6 +113,11 @@ def createNewPreset(new_name,file_name):
 
     #Loads the original file to become the new file
     newPreset = PngImageFile(file_name)
+
+    # If the file already exists just skip and log 
+    if os.path.exists(newNameKpp):
+        print("There is alreade a preset with the name %s, preset rename will be skipped. Delete existing file manually and try again."% newNameKpp)
+        return ""
     # cant save directly to kpp so needs to save as png
     newPreset.save(newNamePng, pnginfo=metadata)
     
@@ -129,6 +139,8 @@ def updateTagFile(old_name:str,new_name:str):
     replaced:str = ""
     for resource in root.iter('resource'):
         identifier = resource.attrib['identifier']
+        #In case of names with especial characters we need to escape them first
+        escapedName:str = re.escape(old_name)
         if re.search(old_name,identifier):
             replaced = re.sub(rf"\b{old_name}\b",new_name,identifier)
             resource.attrib['identifier'] = replaced

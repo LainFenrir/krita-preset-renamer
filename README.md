@@ -63,9 +63,62 @@ python rename_preset.py -p LainKit_Wet_flat_size.kpp i)
 python rename_preset.py -f LainKit_Wet_flat_size.kpp Round_Flat flat
 ```
 
+#### batch_rename
+```
+Command: <-option> <json_file_path>
+``` 
+`json_file_path` a path to the json file it needs to follow the templade of the `batch_rename_template.json`
+`-option` is an optional parameter.
+
+The valid values for `-option` are:
+- `nothing`: will replace the full name for a new one 
+- `-f`: (find and replace) will replace just the name part passed in the `find` with the contents of `new_name`
+- `-p`: (set prefix) a common usecase is to want to set a prefix to a name, this will keep the original name adding what was passed in `new_name` in the begining of the old name.(separated by `_`) 
+
+Json structure:
+```json
+{
+    "presetsToChange":[
+            {
+            "presetName":"",
+            "newPresetName":""
+            }
+        ],
+        "prefix": ""
+}
+```
+Not all fields are necessay for all the operations. Passing all the fields will not cause errors, they will just be ignored.
+- default operation json:
+  ```json
+  {
+    "presetsToChange":[
+            {
+            "presetName":"",
+            "newPresetName":""
+            },
+            {
+            "presetName":"",
+            "newPresetName":""
+            }
+        ]
+  }
+  ```
+- Set prefix json:
+  
+  ```json
+  {
+    "presetsToChange":[
+            {
+            "presetName":""
+            }
+        ],
+    "prefix": ""
+  }
+  ```
+
 ## General Questions
 
-### Why not use krita itself?
+### Why not use krita for this?
 Krita by itself will create a backup file whenever you change the name poluting your resource folder and also krita doesnt have a batch rename. The rename scripts will create a new file copying your old one updating the name in both the file name and the metadata, with the option to delete the old file after creating a new one with the new name.
 
 ### So it will still create a copy, why not changing the file directly?
