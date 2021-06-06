@@ -125,3 +125,25 @@ Krita by itself will create a backup file whenever you change the name poluting 
 
 ### So it will still create a copy, why not changing the file directly?
 I tried, couldn't find a way to do that in python, as I am not very used to this language so had to work around.
+
+### Why not make it a plugin?
+Maybe someday, I have to study krita api to see if doing all this is even possible with it.
+
+### Can this script damage my pc?
+Not really, all it does is read image metadata, create images and write on the krita preset tags xml file.
+
+### Can it break krita?
+I don't think so, from my tests I didn't encounter any problem. If you want you can backup the `kis_paintoppresets_tags.xml` and the paintoppreset folder.
+
+### Does it work for any krita version?
+I tested with krita 4.4.3, anything 4.x version should work. I havent tested with 5.
+
+### Does it delete my presets?
+If you leave the variable `toDeleteOldPreset` as false no, if you set to yes it actually moves your preset to your trashcan and you can recover it from there. 
+
+### When I run the script and open krita again, I see the old preset name and the new one, why?
+Well, its cause the scripts doesn't blacklist the old preset. The way krita gives you the impression the preset has been renamed, is by blacklisting the old preset name, in fact krita works like these scripts, it will create a new file with the metadata and a new name. If you dont want to keep the old preset just edit the script variable `toDeleteOldPreset` to `True`. 
+
+### Couldn't you make it blacklist?
+That was my personal choice. I dislike krita's approach of hiding the old brush cause this way you actually have no idea how much "trash" you have in the presets. So I prefered to leave it there showing so I can delete later or just send the old file to the trash.
+
