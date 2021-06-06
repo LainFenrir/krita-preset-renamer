@@ -139,7 +139,7 @@ I don't think so, from my tests I didn't encounter any problem. If you want you 
 I tested with krita 4.4.3, anything 4.x version should work. I havent tested with 5.
 
 ### Does it delete my presets?
-If you leave the variable `toDeleteOldPreset` as false no, if you set to yes it actually moves your preset to your trashcan and you can recover it from there. 
+If you leave the variable `toDeleteOldPreset` as false no, if you set to true it actually moves your preset to your trashcan and you can recover it from there. 
 
 ### When I run the script and open krita again, I see the old preset name and the new one, why?
 Well, its cause the scripts doesn't blacklist the old preset. The way krita gives you the impression the preset has been renamed, is by blacklisting the old preset name, in fact krita works like these scripts, it will create a new file with the metadata and a new name. If you dont want to keep the old preset just edit the script variable `toDeleteOldPreset` to `True`. 
