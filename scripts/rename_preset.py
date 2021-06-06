@@ -59,6 +59,11 @@ def rename(option,file_name,new_name,find):
     if option == "-p":
         prefixedName:str = prefixName(new_name,file_name)
         newFileName:str = createNewPreset(prefixedName,file_name)
+
+        # Skiping file if file name already exists
+        if not newFileName:
+            return
+
         updateTagFile(file_name,newFileName)
         
         if toDeleteOldPreset:
@@ -67,8 +72,6 @@ def rename(option,file_name,new_name,find):
 
     # no option replaces name with another
     newFileName:str = createNewPreset(new_name,file_name)
-
-    # Skiping file if file name already exists
     if not newFileName:
         return
 
@@ -116,7 +119,7 @@ def createNewPreset(new_name,file_name):
 
     # If the file already exists just skip and log 
     if os.path.exists(newNameKpp):
-        print("There is alreade a preset with the name %s, preset rename will be skipped. Delete existing file manually and try again."% newNameKpp)
+        print("There is already a preset with the name %s, preset rename will be skipped. Delete existing file manually and try again."% newNameKpp)
         return ""
     # cant save directly to kpp so needs to save as png
     newPreset.save(newNamePng, pnginfo=metadata)

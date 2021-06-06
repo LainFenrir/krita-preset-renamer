@@ -32,11 +32,13 @@ Command: <-option> <file_name>
 The valid values for `-option` are:
 - `nothing`: will list only the preset tag inside the metadata
 - `-f`: (full) will print all the metadata inside the file 
+- `-i`: (info) will print the preset name, texture name and path if exists and brush definitions
 
 Examples of usage:
 ```shell
 python view_metadata.py LainKit_Wet_flat_size.kpp
 python view_metadata.py -f LainKit_Wet_flat_size.kpp
+python view_metadata.py -i LainKit_Wet_flat_size.kpp
 ```
 #### rename_preset
 It renames a file, given a new name and updates the new name in the `kis_paintoppresets_tags.xml` the file responsible for the tags for the presets. In case the preset doesnt have any tags that file will not be touched.
@@ -53,7 +55,7 @@ Command: <-option> <file_name> <new_name> <find>
 
 The valid values for `-option` are:
 - `nothing`: will replace the full name for a new one 
-- `-f`: (find and replace) will replace just the name part passed in the `find` with the contents of `new_name`
+- `-f`: (find and replace) will replace just the name part passed in the `find` with the contents of `new_name`. (not done yet)
 - `-p`: (set prefix) a common usecase is to want to set a prefix to a name, this will keep the original name adding what was passed in `new_name` in the begining of the old name.(separated by `_`) 
 
 Examples of usage:
@@ -72,7 +74,7 @@ Command: <-option> <json_file_path>
 
 The valid values for `-option` are:
 - `nothing`: will replace the full name for a new one 
-- `-f`: (find and replace) will replace just the name part passed in the `find` with the contents of `new_name`
+- `-f`: (find and replace) will replace just the name part passed in the `find` with the contents of `new_name`. (not done yet)
 - `-p`: (set prefix) a common usecase is to want to set a prefix to a name, this will keep the original name adding what was passed in `new_name` in the begining of the old name.(separated by `_`) 
 
 Json structure:
