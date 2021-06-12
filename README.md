@@ -11,7 +11,6 @@ After you installed python, you need to install these python libraries. just cop
 ```
 python -m pip install -U send2trash
 python -m pip install --upgrade Pillow
-
 ```
 You can read more about them in the links below:  
 [send2trash](https://github.com/arsenetar/send2trash)  
@@ -133,7 +132,7 @@ Maybe someday, I have to study krita api to see if doing all this is even possib
 Not really, all it does is read image metadata, create images and write on the krita preset tags xml file.
 
 ### Can it break krita?
-I don't think so, from my tests I didn't encounter any problem. If you want you can backup the `kis_paintoppresets_tags.xml` and the paintoppreset folder.
+I don't think so, from my tests I didn't encounter any problem. If you want you can backup the `kis_paintoppresets_tags.xml` and the paintoppreset folder before using it. Or replicate the folder structure in some other place and copy the files you want to rename.
 
 ### Does it work for any krita version?
 I tested with krita 4.4.3, anything 4.x version should work. I havent tested with 5.
@@ -147,3 +146,8 @@ Well, its cause the scripts don't blacklist the old preset. The way krita gives 
 ### Couldn't you make it blacklist?
 That was my personal choice. I dislike krita's approach of hiding the old brush cause this way you actually have no idea how much "trash" you have in the presets. So I prefered to leave it there showing so I can delete later or just send the old file to the trash.
 
+### I ran the script with krita opened and nothing happened
+You need to close and open krita again so it loads the files again. In fact this script is made so you dont need to open krita just to rename presets
+
+### Does it work with bundle presets?
+No

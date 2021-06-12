@@ -24,7 +24,7 @@ from send2trash import send2trash
 toDeleteOldPreset:bool = False
 
 presetTagFileName:str = "kis_paintoppresets_tags.xml"
-allOptions:list = ["-f","-p"]
+allOptions:list = ["-p"]
 
 def main(argv):
     adjustedArgs:list = adjustArgs(argv)
@@ -49,12 +49,6 @@ def main(argv):
 Renames .kpp file
 """
 def rename(option,file_name,new_name,find):
-    # -find and replace
-    if option == "-f":
-        #todo: do this later
-        print("Not Done Yet!")
-        return
-
     # -p set prefix
     if option == "-p":
         prefixedName:str = prefixName(new_name,file_name)

@@ -24,7 +24,7 @@ toDeleteOldPreset:bool = False
 presetTagFileName:str = "kis_paintoppresets_tags.xml"
 presetsFolderPath = ""
 tagsFilePath = ""
-allOptions:list = ["-f","-p"]
+allOptions:list = ["-p"]
 
 def main(argv):
     adjustedArgs:list = adjustArgs(argv)
@@ -52,11 +52,6 @@ def rename(option:str,jsonFile):
     jsonData = loadJson(jsonFile)
     presetsList = jsonData["presetsToChange"]
    
-    # -f find and replace 
-    if option == "-f":
-        print("Not Done Yet!")
-        return
-
     # -p set prefix
     if option == "-p":
         prefix:str = jsonData["prefix"]
@@ -181,7 +176,7 @@ def deleteOldPreset(old_file_name:str):
             print("Preset [%s] not found."% old_file_name)
             return
         send2trash(pathToDelete)
-    print("File %s has been sent to the trash can."% old_file_name)
+        print("File %s has been sent to the trash can."% old_file_name)
 
 """
 Builds the path to the resources

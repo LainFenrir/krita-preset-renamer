@@ -50,25 +50,32 @@ def view(option:str,file_name:str):
     input_file.close()
 
 """
-Loads the image
+Lists some attributes of the preset
 """
 def listInfo(input_file):
     presetMetadata:str = input_file.info['preset']
     metadataXml = ET.fromstring(presetMetadata)
     requiredBrushFilesList = metadataXml.find("./param[@name='requiredBrushFilesList']")
+    requiredBrushFile = metadataXml.find("./param[@name='requiredBrushFile']")
     CompositeOp = metadataXml.find("./param[@name='CompositeOp']")
     EraserMode = metadataXml.find("./param[@name='EraserMode']")
 
     print("\nPreset name: %s"% metadataXml.attrib["name"])
     print("Preset paintopid: %s"% metadataXml.attrib["paintopid"])
-    print("Required brush files: %s" % requiredBrushFilesList.text)
+
+    if requiredBrushFilesList is None:
+        print("Required brush files: None")
+    else:
+        print("Required brush files: %s" % requiredBrushFilesList.text)
+    print("Required brush file: %s" % requiredBrushFile.text)
+        
     print("Blending mode: %s" % CompositeOp.text)
     print("Eraser mode: %s" % translateBinaryBool(EraserMode.text))
     print("=====================================")
 
     OpacityValue = metadataXml.find("./param[@name='OpacityValue']")
     OpacityUseCurve = metadataXml.find("./param[@name='OpacityUseCurve']")
-    
+
     FlowUseCurve = metadataXml.find("./param[@name='FlowUseCurve']")
     FlowValue = metadataXml.find("./param[@name='FlowValue']")
 
@@ -109,10 +116,6 @@ def listInfo(input_file):
         if definitionXml.attrib["type"] == "gbr_brush":
             print("     Brush image name: %s"% definitionXml.attrib["filename"])
             print("     Brush image scale: %s"% definitionXml.attrib["scale"])
-            print("     Brush Application: %s"% definitionXml.attrib["brushApplication"])
-            print("     Contrast Adjustment: %s"% definitionXml.attrib["ContrastAdjustment"])
-            print("     Adjustment Mid Point: %s"% definitionXml.attrib["AdjustmentMidPoint"])
-            print("     Brightness Adjustment: %s"% definitionXml.attrib["BrightnessAdjustment"])
             print("     Use Color as Mask: %s"% translateBinaryBool(definitionXml.attrib["ColorAsMask"]))
         
         if definitionXml.attrib["type"] == "auto_brush":
